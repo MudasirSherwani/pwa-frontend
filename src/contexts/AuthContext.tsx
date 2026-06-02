@@ -1,13 +1,10 @@
 /**
  * Authentication context — Supabase Auth edition.
  *
- * Tracks two things:
- *   - The Supabase Auth session (id, email, JWT)
- *   - The matching row in public.users (display_name, roles, active)
- *
- * The profile row is fetched on every sign-in and exposed as `profile`.
- * Components should read display name from `profile?.display_name`, not
- * from auth metadata.
+ * Resilient to:
+ *   - Expired sessions on app reload
+ *   - Strict-mode double-mount
+ *   - Slow / failed profile fetches (UI still becomes "ready")
  */
 import {
   createContext,
@@ -42,17 +39,21 @@ interface AuthState {
 const AuthCtx = createContext<AuthState | undefined>(undefined);
 
 async function fetchProfile(userId: string): Promise<UserProfile | null> {
-  const { data, error } = await supabase
-    .from("users")
-    .select("id, email, display_name, roles, active")
-    .eq("id", userId)
-    .maybeSingle();
-
-  if (error) {
-    console.warn("Failed to load user profile:", error.message);
+  try {
+    const { data, error } = await supabase
+      .from("users")
+      .select("id, email, display_name, roles, active")
+      .eq("id", userId)
+      .maybeSingle();
+    if (error) {
+      console.warn("[auth] profile fetch error:", error.message);
+      return null;
+    }
+    return data as UserProfile | null;
+  } catch (e) {
+    console.warn("[auth] profile fetch threw:", e);
     return null;
   }
-  return data as UserProfile | null;
 }
 
 export function AuthProvider({ children }: { children: ReactNode }) {
@@ -63,33 +64,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     let cancelled = false;
 
-    // Hydrate from any persisted session, then subscribe to changes.
-    supabase.auth.getSession().then(async ({ data }) => {
-      if (cancelled) return;
-      setSession(data.session);
-      if (data.session?.user) {
-        const p = await fetchProfile(data.session.user.id);
-        if (!cancelled) setProfile(p);
-      }
+    // Belt-and-braces: never let the app sit on "Loading…" for more
+    // than ~5 seconds. If auth hasn't resolved by then, flip ready=true
+    // anyway. The session will still update if/when it eventually arrives.
+    const readyTimeout = window.setTimeout(() => {
       if (!cancelled) setReady(true);
-    });
+    }, 5000);
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async (_e, s) => {
+    // 1. Subscribe FIRST so we don't miss the INITIAL_SESSION event
+    const { data: sub } = supabase.auth.onAuthStateChange((event, s) => {
       if (cancelled) return;
+      console.debug("[auth] state change:", event, !!s);
       setSession(s);
+      setReady(true);
+
+      // Load profile in the background; UI doesn't block on it
       if (s?.user) {
-        const p = await fetchProfile(s.user.id);
-        if (!cancelled) setProfile(p);
+        fetchProfile(s.user.id).then((p) => {
+          if (!cancelled) setProfile(p);
+        });
       } else {
         setProfile(null);
       }
-      if (!cancelled) setReady(true);
     });
+
+    // 2. Then hydrate from any persisted session. If the listener fires
+    //    first (which it usually does), this is a no-op; otherwise we
+    //    pick up the session here.
+    supabase.auth
+      .getSession()
+      .then(({ data }) => {
+        if (cancelled) return;
+        // Don't overwrite if the listener already populated it
+        setSession((prev) => prev ?? data.session);
+        setReady(true);
+        if (data.session?.user) {
+          fetchProfile(data.session.user.id).then((p) => {
+            if (!cancelled && !profile) setProfile(p);
+          });
+        }
+      })
+      .catch((e) => {
+        console.warn("[auth] getSession threw:", e);
+        if (!cancelled) setReady(true);
+      });
 
     return () => {
       cancelled = true;
+      clearTimeout(readyTimeout);
       sub.subscription.unsubscribe();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const signIn = useCallback(async (email: string, password: string) => {
