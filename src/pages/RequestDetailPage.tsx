@@ -74,34 +74,40 @@ export function RequestDetailPage() {
   const expiresAt = toDate(request.expires_at);
   const isExpired = expiresAt ? expiresAt.getTime() < Date.now() : false;
 
-  const submit = async () => {
-    if (!action || !request) return;
-    setBusy(true);
-    try {
-      const fn = action === "approve" ? api.approve : api.reject;
-      await fn({
-        requestId: request.request_id,
-        token: request.token,
-        approvalRemarks: remarks.trim() || undefined,
-      });
-      toast.push({
-        kind: action === "approve" ? "success" : "info",
-        title: action === "approve" ? "Approved" : "Rejected",
-        body: `${request.customer_name ?? ""} · ${formatAmount(request.amount, request.currency)}`,
-      });
-      setAction(null);
-      setRemarks("");
-      navigate("/pending");
-    } catch (err) {
-      toast.push({
-        kind: "error",
-        title: "Action failed",
-        body: err instanceof Error ? err.message : String(err),
-      });
-    } finally {
-      setBusy(false);
+const submit = async () => {
+  if (!action || !request) return;
+  setBusy(true);
+  try {
+    const payload = {
+      requestId: request.request_id,
+      token: request.token,
+      approvalRemarks: remarks.trim() || undefined,
+    };
+
+    if (action === "approve") {
+      await api.approve(payload);
+    } else {
+      await api.reject(payload);
     }
-  };
+
+    toast.push({
+      kind: action === "approve" ? "success" : "info",
+      title: action === "approve" ? "Approved" : "Rejected",
+      body: `${request.customer_name ?? ""} · ${formatAmount(request.amount, request.currency)}`,
+    });
+    setAction(null);
+    setRemarks("");
+    navigate("/pending");
+  } catch (err) {
+    toast.push({
+      kind: "error",
+      title: "Action failed",
+      body: err instanceof Error ? err.message : String(err),
+    });
+  } finally {
+    setBusy(false);
+  }
+};
 
   return (
     <div className="space-y-6 animate-fade-up">

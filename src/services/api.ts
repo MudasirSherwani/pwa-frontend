@@ -89,17 +89,17 @@ export const api = {
     return request<ApprovalRequest[]>("GET", `/approvalHistory${suffix}`);
   },
 
-  status: (request_id: string) =>
-    request<ApprovalRequest>("GET", `/requestStatus/${encodeURIComponent(request_id)}`),
+  status: (requestId: string) =>
+    request<ApprovalRequest>("GET", `/requestStatus/${encodeURIComponent(requestId)}`),
   
   approve: (input: {
-    request_id: string;
+    requestId: string;
     token: string;
     approvalRemarks?: string;
   }) => request<ApprovalRequest>("POST", "/approveRequest", input),
 
   reject: (input: {
-    request_id: string;
+    requestId: string;
     token: string;
     approvalRemarks?: string;
   }) => request<ApprovalRequest>("POST", "/rejectRequest", input),

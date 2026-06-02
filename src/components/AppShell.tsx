@@ -18,7 +18,7 @@ interface NavItem {
 }
 
 export function AppShell() {
-  const { user, signOut } = useAuth();
+  const { user, profile, signOut } = useAuth();
   const { theme, setTheme, resolved } = useTheme();
   const navigate = useNavigate();
   const { requests: pending } = usePendingRequests();
@@ -103,7 +103,7 @@ export function AppShell() {
               Signed in as
             </div>
             <div className="truncate text-sm font-semibold text-ink-900 dark:text-ink-50">
-              {user?.displayName ?? user?.email ?? "Unknown"}
+              {profile?.display_name ?? user?.email ?? "Unknown"}
             </div>
           </div>
 

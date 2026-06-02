@@ -30,7 +30,7 @@ const toneClass: Record<Stat["tone"], string> = {
 };
 
 export function DashboardPage() {
-  const { user } = useAuth();
+  const { user, profile } = useAuth();
   const toast = useToast();
   const { enable: enablePush } = usePushNotifications();
   const [stats, setStats] = useState<DashboardStats | null>(null);
@@ -122,7 +122,7 @@ export function DashboardPage() {
             : "evening"}
           ,{" "}
           <span className="italic text-accent">
-            {user?.displayname?.split(" ")[0] ?? "there"}
+            {profile?.display_name?.split(" ")[0] ?? "there"}
           </span>
           .
         </h1>
