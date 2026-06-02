@@ -1,0 +1,26 @@
+# netlify.toml
+[build]
+  base    = "pwa-frontend"
+  command = "npm run build"
+  publish = "dist"     # relative to base
+
+[build.environment]
+  NODE_VERSION = "20"
+  NPM_FLAGS    = "--prefer-offline --no-audit"
+
+# SPA fallback: any unknown path serves index.html so React Router takes over
+[[redirects]]
+  from   = "/*"
+  to     = "/index.html"
+  status = 200
+
+# Service worker should never be cached
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/registerSW.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
