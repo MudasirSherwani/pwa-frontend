@@ -1,6 +1,6 @@
 {
-  "name": "MyWebSite",
-  "short_name": "MySite",
+  "name": "Approval ASS",
+  "short_name": "ASS App",
   "icons": [
     {
       "src": "/web-app-manifest-192x192.png",
