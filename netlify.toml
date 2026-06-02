@@ -1,18 +1,15 @@
 [build]
-  command = "npm run build"
+  command = "npm ci && npm run build"
   publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS    = "--prefer-offline --no-audit"
 
-# SPA fallback: any unknown path serves index.html so React Router takes over
 [[redirects]]
   from   = "/*"
   to     = "/index.html"
   status = 200
 
-# Service worker should never be cached
 [[headers]]
   for = "/sw.js"
   [headers.values]
