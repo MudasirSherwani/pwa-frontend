@@ -1,8 +1,6 @@
-# netlify.toml
 [build]
-  base    = "pwa-frontend"
   command = "npm run build"
-  publish = "dist"     # relative to base
+  publish = "dist"
 
 [build.environment]
   NODE_VERSION = "20"
