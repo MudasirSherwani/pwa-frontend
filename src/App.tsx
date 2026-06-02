@@ -11,7 +11,7 @@ import { DashboardPage } from "./pages/DashboardPage";
 import { PendingPage } from "./pages/PendingPage";
 import { RequestDetailPage } from "./pages/RequestDetailPage";
 import { HistoryPage } from "./pages/HistoryPage";
-import Favicon from ''
+
 
 function RequireAuth({ children }: { children: ReactNode }) {
   const { user, ready } = useAuth();
