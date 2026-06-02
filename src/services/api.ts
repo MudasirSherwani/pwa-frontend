@@ -1,10 +1,4 @@
-/**
- * Typed REST client for the approval Edge Function.
- *
- * Each call is prefixed with the function base URL, signed with the
- * current Supabase access token, retried once on transient failure,
- * and unwrapped from the { ok, data, error } envelope.
- */
+
 import { supabase, API_BASE_URL } from "./supabase";
 import type {
   ApiEnvelope,
