@@ -204,43 +204,45 @@ export function DashboardPage() {
           )}
 
           {stats?.recent.map((r, i) => {
-         return  (           
-            <Link
-              /* FIX: Falls back cleanly to loop index if r.requestId is blank */
-              key={r.request_id || `recent-${i}`}
-              to={`/requests/${r.request_id}`}
-              className="flex items-center justify-between gap-3 px-5 py-4 transition-colors hover:bg-ink-50 dark:hover:bg-ink-800/40"
-            >
-              
-              <div className="min-w-0">
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-semibold text-ink-900 dark:text-ink-50">
-                    {r.customer_name}
-                  </span>
-                  <span className="text-xs text-ink-400">·</span>
-                  <span className="text-xs text-ink-500 dark:text-ink-400">
-                    {r.request_type}
-                  </span>
-                </div>
-                <div className="mt-0.5 truncate text-xs text-ink-500 dark:text-ink-400">
-                  {r.requested_by_name} · {formatRelative(r.requested_at)}
-                </div>
-              </div>
-              <div className="flex items-center gap-4">
-                <div className="text-right">
-                  <div className="font-mono text-sm font-semibold">
-                    {formatAmount(r.amount, r.currency)}
-                  </div>
-                </div>
-                <StatusBadge status={r.status} />
-                <Icon.Chevron
-                  width={16}
-                  height={16}
-                  className="text-ink-300 dark:text-ink-500"
-                />
-              </div>
-            </Link>
-         )
+  const customerName = r.customer_name ?? "—";
+  return (
+    <Link
+      /* FIX: Falls back cleanly to loop index if r.request_id is blank */
+      key={r.request_id || `recent-${i}`}
+      to={`/requests/${r.request_id}`}
+      className="block px-4 py-4 transition-colors hover:bg-ink-50 dark:hover:bg-ink-800/40 sm:px-5"
+    >
+      {/* Row 1: customer + status. Status sits to the right on every width. */}
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0 flex-1">
+          <div className="truncate text-sm font-semibold text-ink-900 dark:text-ink-50">
+            {customerName}
+          </div>
+          <div className="mt-0.5 truncate text-xs text-ink-500 dark:text-ink-400">
+            {r.request_type} · by {r.requested_by_name ?? r.requested_by ?? "—"}
+          </div>
+        </div>
+        <StatusBadge status={r.status} />
+      </div>
+
+      {/* Row 2: amount + time + chevron */}
+      <div className="mt-2.5 flex items-center justify-between gap-3">
+        <div className="flex items-baseline gap-2">
+          <span className="font-mono text-sm font-semibold tabular-nums text-ink-900 dark:text-ink-50">
+            {formatAmount(r.amount, r.currency)}
+          </span>
+          <span className="text-[11px] uppercase tracking-wider text-ink-400 dark:text-ink-500">
+            {formatRelative(r.requested_at)}
+          </span>
+        </div>
+        <Icon.Chevron
+          width={16}
+          height={16}
+          className="flex-shrink-0 text-ink-300 dark:text-ink-500"
+        />
+      </div>
+    </Link>
+  );
 })}
         </div>
       </section>

@@ -199,24 +199,24 @@ const submit = async () => {
       {/* Action bar */}
       {isPending && !isExpired && (
         <div className="card p-4">
-          {action === null ? (
-            <div className="flex flex-wrap items-center justify-end gap-2">
-              <button
-                onClick={() => setAction("reject")}
-                className="btn-danger"
-              >
-                <Icon.X width={16} height={16} />
-                Reject
-              </button>
-              <button
-                onClick={() => setAction("approve")}
-                className="btn-success"
-              >
-                <Icon.Check width={16} height={16} />
-                Approve
-              </button>
-            </div>
-          ) : (
+{action === null ? (
+  <div className="flex flex-col-reverse gap-2 sm:flex-row sm:items-center sm:justify-end">
+    <button
+      onClick={() => setAction("reject")}
+      className="btn-danger w-full sm:w-auto"
+    >
+      <Icon.X width={16} height={16} />
+      Reject
+    </button>
+    <button
+      onClick={() => setAction("approve")}
+      className="btn-success w-full sm:w-auto"
+    >
+      <Icon.Check width={16} height={16} />
+      Approve
+    </button>
+  </div>
+) : (
             <div className="space-y-3">
               <div className="text-sm font-semibold">
                 Confirm {action === "approve" ? "approval" : "rejection"}
@@ -228,29 +228,29 @@ const submit = async () => {
                 rows={3}
                 className="input"
               />
-              <div className="flex flex-wrap justify-end gap-2">
-                <button
-                  onClick={() => {
-                    setAction(null);
-                    setRemarks("");
-                  }}
-                  className="btn-ghost"
-                  disabled={busy}
-                >
-                  Cancel
-                </button>
-                <button
-                  onClick={submit}
-                  disabled={busy}
-                  className={action === "approve" ? "btn-success" : "btn-danger"}
-                >
-                  {busy
-                    ? "Submitting…"
-                    : action === "approve"
-                    ? "Confirm approval"
-                    : "Confirm rejection"}
-                </button>
-              </div>
+              <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+  <button
+    onClick={() => {
+      setAction(null);
+      setRemarks("");
+    }}
+    className="btn-ghost w-full sm:w-auto"
+    disabled={busy}
+  >
+    Cancel
+  </button>
+  <button
+    onClick={submit}
+    disabled={busy}
+    className={`${action === "approve" ? "btn-success" : "btn-danger"} w-full sm:w-auto`}
+  >
+    {busy
+      ? "Submitting…"
+      : action === "approve"
+      ? "Confirm approval"
+      : "Confirm rejection"}
+  </button>
+</div>
             </div>
           )}
         </div>
