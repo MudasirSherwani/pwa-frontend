@@ -18,7 +18,8 @@ export type RequestType =
   | "VehicleSale"
   | "Discount"
   | "Finance"
-  | "Other";
+  | "Other"
+  | "CASHORDER_AMOUNT_CORRECTION";
 
 /**
  * Snake-case row coming from Postgres via PostgREST or the Edge Function.
@@ -47,6 +48,7 @@ export interface ApprovalRequest {
   is_processed: boolean;
   attachments: string[] | null;
   metadata: Record<string, unknown> | null;
+  cash_order_id: number | null;
 }
 
 export interface DashboardStats {
