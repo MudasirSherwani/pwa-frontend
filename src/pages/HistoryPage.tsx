@@ -9,7 +9,7 @@ import { useToast } from "../contexts/ToastContext";
 import type { ApprovalRequest, ApprovalStatus } from "../types";
 import { StatusBadge } from "../components/StatusBadge";
 import { Icon } from "../components/Icon";
-import { formatAmount, formatRelative } from "../utils/format";
+import { formatAmount, formatRelative, formatRequestType } from "../utils/format";
 
 const FILTERS: { label: string; value: ApprovalStatus | "All" }[] = [
   { label: "All", value: "All" },
@@ -143,7 +143,7 @@ export function HistoryPage() {
                       </div>
                     </td>
                     <td className="px-5 py-3 text-sm text-ink-500 dark:text-ink-400">
-                      {r.request_type}
+                      {formatRequestType(r.request_type)}
                     </td>
                     <td className="px-5 py-3 text-right font-mono text-sm font-semibold">
                       {formatAmount(r.amount, r.currency)}

@@ -12,7 +12,7 @@ import { usePushNotifications } from "../hooks/usePushNotifications";
 import { useToast } from "../contexts/ToastContext";
 import { Icon } from "../components/Icon";
 import { StatusBadge } from "../components/StatusBadge";
-import { formatAmount, formatRelative } from "../utils/format";
+import { formatAmount, formatRelative, formatRequestType } from "../utils/format";
 import type { DashboardStats } from "../types";
 
 interface Stat {
@@ -219,7 +219,7 @@ export function DashboardPage() {
             {customerName}
           </div>
           <div className="mt-0.5 truncate text-xs text-ink-500 dark:text-ink-400">
-            {r.request_type} · by {r.requested_by_name ?? r.requested_by ?? "—"}
+            {formatRequestType(r.request_type)} · by {r.requested_by_name ?? r.requested_by ?? "—"}
           </div>
         </div>
         <StatusBadge status={r.status} />

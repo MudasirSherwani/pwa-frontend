@@ -8,7 +8,7 @@ import { Link } from "react-router-dom";
 import { usePendingRequests } from "../hooks/usePendingRequests";
 import { StatusBadge } from "../components/StatusBadge";
 import { Icon } from "../components/Icon";
-import { formatAmount, formatRelative } from "../utils/format";
+import { formatAmount, formatRelative, formatRequestType } from "../utils/format";
 
 export function PendingPage() {
   const { requests, loading, error } = usePendingRequests();
@@ -88,12 +88,12 @@ export function PendingPage() {
                       {formatRelative(r.requested_at)}
                     </div>
                   </div>
-                  <div className="text-right">
+                  <div className="text-right flex-shrink-0 min-w-[100px] max-w-[160px]">
                     <div className="font-display text-lg font-semibold tabular-nums">
                       {formatAmount(r.amount, r.currency)}
                     </div>
-                    <div className="text-xs uppercase tracking-wider text-ink-400 dark:text-ink-500">
-                      {r.request_type}
+                    <div className="text-xs uppercase tracking-wider text-ink-400 dark:text-ink-500 break-words">
+                      {formatRequestType(r.request_type)}
                     </div>
                   </div>
                   <Icon.Chevron

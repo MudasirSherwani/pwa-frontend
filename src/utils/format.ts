@@ -49,3 +49,12 @@ export function formatAmount(value: number, currency = "PKR"): string {
     return `${currency} ${value.toLocaleString()}`;
   }
 }
+
+export function formatRequestType(type: string | null | undefined): string {
+  if (!type) return "—";
+  if (type === "CASHORDER_AMOUNT_CORRECTION") {
+    return "Cash Order Correction";
+  }
+  // Replace underscores with spaces and return
+  return type.replace(/_/g, " ");
+}

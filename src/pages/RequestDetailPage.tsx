@@ -17,6 +17,7 @@ import {
   formatDateTime,
   formatRelative,
   toDate,
+  formatRequestType,
 } from "../utils/format";
 
 type Action = "approve" | "reject" | null;
@@ -127,7 +128,7 @@ const submit = async () => {
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <div className="text-xs font-medium uppercase tracking-wider text-ink-500 dark:text-ink-400">
-                {request.request_type} · #{request.transaction_id}
+                {formatRequestType(request.request_type)} · #{request.transaction_id}
               </div>
               <h1 className="mt-1 font-display text-3xl font-semibold tracking-tight">
                 {request.customer_name ?? "—"}
